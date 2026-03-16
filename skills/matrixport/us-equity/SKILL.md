@@ -14,7 +14,7 @@ Place and manage US equity orders on Matrixport. All endpoints require authentic
 ## Base URL
 
 ```
-https://api.matrixport.com
+https://mapi.matrixport.com/skopenapi
 ```
 
 ## Authentication

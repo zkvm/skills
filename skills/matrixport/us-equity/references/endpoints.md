@@ -41,7 +41,7 @@ Place a new order (limit or market) for a US equity.
 ### Example
 
 ```bash
-curl -X POST 'https://api.matrixport.com/v1/place_order' \
+curl -X POST 'https://mapi.matrixport.com/skopenapi/v1/place_order' \
   -H 'X-MatrixPort-Access-Key: <api_key>' \
   -H 'X-Signature: <signature>' \
   -H 'X-Timestamp: <timestamp_ms>' \
@@ -141,7 +141,7 @@ Query the status and details of a single order.
 ### Example
 
 ```bash
-curl -X GET 'https://api.matrixport.com/v1/orders?order_id=1217311455238426624' \
+curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/orders?order_id=1217311455238426624' \
   -H 'X-MatrixPort-Access-Key: <api_key>' \
   -H 'X-Signature: <signature>' \
   -H 'X-Timestamp: <timestamp_ms>' \
@@ -194,7 +194,7 @@ None.
 ### Example
 
 ```bash
-curl -X GET 'https://api.matrixport.com/v1/balance' \
+curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/balance' \
   -H 'X-MatrixPort-Access-Key: <api_key>' \
   -H 'X-Signature: <signature>' \
   -H 'X-Timestamp: <timestamp_ms>' \
@@ -246,7 +246,7 @@ Returns an array of position objects under `data`.
 ### Example
 
 ```bash
-curl -X GET 'https://api.matrixport.com/v1/positions' \
+curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/positions' \
   -H 'X-MatrixPort-Access-Key: <api_key>' \
   -H 'X-Signature: <signature>' \
   -H 'X-Timestamp: <timestamp_ms>' \

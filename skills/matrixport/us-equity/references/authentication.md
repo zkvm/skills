@@ -5,7 +5,7 @@ All private REST requests require HMAC SHA256 signed requests.
 ## Base URL
 
 ```
-https://api.matrixport.com
+https://mapi.matrixport.com/skopenapi
 ```
 
 ## Required Headers
@@ -145,7 +145,7 @@ headers = {
 ```bash
 API_KEY="your_api_key"
 SECRET_KEY="your_secret_key"
-BASE_URL="https://api.matrixport.com"
+BASE_URL="https://mapi.matrixport.com/skopenapi"
 TIMESTAMP=$(date +%s000)
 
 METHOD="GET"
@@ -218,7 +218,7 @@ headers = {
 ```bash
 API_KEY="your_api_key"
 SECRET_KEY="your_secret_key"
-BASE_URL="https://api.matrixport.com"
+BASE_URL="https://mapi.matrixport.com/skopenapi"
 TIMESTAMP=$(date +%s000)
 
 METHOD="POST"
