@@ -14,12 +14,12 @@ Agent skills for the [Matrixport](https://www.matrixport.com) platform. Compatib
 
 Install globally (available across all projects):
 ```bash
-npx skills add matrixport/skills --skill skills/matrixport/us-equity -g
+npx skills add zkvm/skills --skill us-equity -g
 ```
 
 Install for a specific project only:
 ```bash
-npx skills add matrixport/skills --skill skills/matrixport/us-equity
+npx skills add zkvm/skills --skill us-equity
 ```
 
 ### OpenClaw — via `clawhub`
@@ -33,8 +33,8 @@ clawhub install matrixport-us-equity
 ### Manual installation
 
 ```bash
-git clone https://github.com/matrixport/skills.git
-cp -r skills/matrixport/skills/skills/matrixport/us-equity ~/.claude/skills/us-equity
+git clone https://github.com/zkvm/skills.git
+cp -r skills/skills/matrixport/us-equity ~/.claude/skills/us-equity
 ```
 
 ## Usage

@@ -111,7 +111,7 @@ prehash = "1731931956000GET/v1/orders&order_id=1217311455238426624"
 ```
 
 ```python
-import time, hmac, hashlib
+import time, hmac, hashlib, requests
 
 def get_timestamp():
     return int(time.time() * 1000)
@@ -125,6 +125,7 @@ def pre_hash(timestamp, method, request_path, body):
 
 secret_key = "your_secret_key"
 api_key    = "your_api_key"
+base_url   = "https://mapi.matrixport.com/skopenapi"
 timestamp  = get_timestamp()
 
 method    = "GET"
@@ -140,6 +141,9 @@ headers = {
     "X-Timestamp":             str(timestamp),
     "X-Auth-Version":          "v2",
 }
+
+response = requests.get(f"{base_url}{api_path}?{query_str}", headers=headers)
+print(response.json())
 ```
 
 ```bash
@@ -155,7 +159,7 @@ QUERY="order_id=1217311455238426624"
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${QUERY}"
 SIGNATURE=$(echo -n "$PREHASH" | openssl dgst -sha256 -hmac "$SECRET_KEY" | cut -d' ' -f2)
 
-curl -X GET "${BASE_URL}${API_PATH}?${QUERY}" \
+curl -s -X GET "${BASE_URL}${API_PATH}?${QUERY}" \
   -H "X-MatrixPort-Access-Key: ${API_KEY}" \
   -H "X-Signature: ${SIGNATURE}" \
   -H "X-Timestamp: ${TIMESTAMP}" \
@@ -176,7 +180,7 @@ prehash   = 1731931956000POST/v1/place_order&{"symbol":"AAPL.US","side":"Buy","p
 ```
 
 ```python
-import time, hmac, hashlib, json
+import time, hmac, hashlib, json, requests
 
 def get_timestamp():
     return int(time.time() * 1000)
@@ -190,6 +194,7 @@ def pre_hash(timestamp, method, request_path, body):
 
 secret_key = "your_secret_key"
 api_key    = "your_api_key"
+base_url   = "https://mapi.matrixport.com/skopenapi"
 timestamp  = get_timestamp()
 
 method   = "POST"
@@ -201,7 +206,8 @@ params   = {
     "qty":    "10",
     "remark": "test123",
 }
-body = json.dumps(params)  # key order in body must match what is sent in the request
+# Serialize once — use the same string for both signing and the request body
+body = json.dumps(params, separators=(',', ':'))
 
 prehash   = pre_hash(timestamp, method, api_path, body)
 signature = sign(prehash, secret_key)
@@ -213,6 +219,9 @@ headers = {
     "X-Auth-Version":          "v2",
     "Content-Type":            "application/json",
 }
+
+response = requests.post(f"{base_url}{api_path}", headers=headers, data=body)
+print(response.json())
 ```
 
 ```bash
@@ -228,7 +237,7 @@ BODY='{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test1
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${BODY}"
 SIGNATURE=$(echo -n "$PREHASH" | openssl dgst -sha256 -hmac "$SECRET_KEY" | cut -d' ' -f2)
 
-curl -X POST "${BASE_URL}${API_PATH}" \
+curl -s -X POST "${BASE_URL}${API_PATH}" \
   -H "X-MatrixPort-Access-Key: ${API_KEY}" \
   -H "X-Signature: ${SIGNATURE}" \
   -H "X-Timestamp: ${TIMESTAMP}" \
@@ -236,6 +245,58 @@ curl -X POST "${BASE_URL}${API_PATH}" \
   -H "Content-Type: application/json" \
   -d "$BODY"
 ```
+
+## Executing Requests
+
+**Preferred: `requests` library (Python)**
+
+Use `requests` rather than `urllib` — it handles SSL certificates correctly and always returns the response body regardless of HTTP status code:
+
+```bash
+pip install requests
+```
+
+```python
+response = requests.get(url, headers=headers)
+data = response.json()   # works for both 200 and error responses
+```
+
+**macOS SSL note:** If you see `ssl.SSLCertVerificationError`, run:
+```bash
+/Applications/Python\ 3.x/Install\ Certificates.command
+# or: pip install certifi
+```
+
+**curl** is also a reliable option for quick testing — it handles SSL and non-2xx responses without extra setup:
+```bash
+curl -s -X GET "..." -H "..."   # -s suppresses progress output
+```
+
+## Error Handling
+
+Always read the full response body — error details are in the JSON, not just the HTTP status code.
+
+```python
+response = requests.get(url, headers=headers)
+result = response.json()
+if result.get("code") != 0:
+    print(f"API error {result['code']}: {result.get('message')}")
+else:
+    print(result["data"])
+```
+
+### Common Error Codes
+
+| Code | Meaning | Likely cause |
+|------|---------|--------------|
+| `0` | Success | — |
+| `12000013` | Internal Server Error | Signing error, malformed request, or server-side issue — double-check prehash format and timestamp |
+| Auth errors | Invalid signature | Wrong prehash format, wrong secret key, or timestamp too far from server time (check clock sync) |
+
+If you receive repeated auth errors, verify:
+1. Timestamp is current (not hardcoded or stale)
+2. Prehash format exactly matches: `{timestamp}{METHOD}{path}&{body_or_query}`
+3. For POST: the JSON body string used for signing is byte-for-byte identical to the body sent in the request
 
 ## Security Notes
 
