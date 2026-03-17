@@ -58,7 +58,7 @@ prehash = timestamp + METHOD + api_path + '&' + json_body
 Where:
 - `{timestamp}` — millisecond epoch integer as a string
 - `{METHOD}` — HTTP method in **UPPERCASE** (e.g. `GET`, `POST`, `PUT`, `DELETE`)
-- `{api_path}` — the request path including leading `/` (e.g. `/v1/orders`)
+- `{api_path}` — the **full** request path including the `/skopenapi` prefix (e.g. `/skopenapi/v1/orders`)
 - `&` — literal ampersand separator
 - `{body_or_query_string}` — query string for GET, JSON body string for POST/PUT
 
@@ -104,10 +104,10 @@ Query order status by order ID:
 ```
 timestamp  = 1731931956000
 method     = GET
-api_path   = /v1/orders
+api_path   = /skopenapi/v1/orders          ← full path including /skopenapi prefix
 params     = order_id=1217311455238426624
 
-prehash = "1731931956000GET/v1/orders&order_id=1217311455238426624"
+prehash = "1731931956000GET/skopenapi/v1/orders&order_id=1217311455238426624"
 ```
 
 ```python
@@ -125,11 +125,11 @@ def pre_hash(timestamp, method, request_path, body):
 
 secret_key = "your_secret_key"
 api_key    = "your_api_key"
-base_url   = "https://mapi.matrixport.com/skopenapi"
+base_url   = "https://mapi.matrixport.com"
 timestamp  = get_timestamp()
 
 method    = "GET"
-api_path  = "/v1/orders"
+api_path  = "/skopenapi/v1/orders"   # full path used for both prehash and URL
 query_str = "order_id=1217311455238426624"
 
 prehash   = pre_hash(timestamp, method, api_path, query_str)
@@ -149,11 +149,11 @@ print(response.json())
 ```bash
 API_KEY="your_api_key"
 SECRET_KEY="your_secret_key"
-BASE_URL="https://mapi.matrixport.com/skopenapi"
+BASE_URL="https://mapi.matrixport.com"
 TIMESTAMP=$(date +%s000)
 
 METHOD="GET"
-API_PATH="/v1/orders"
+API_PATH="/skopenapi/v1/orders"   # full path used for both prehash and URL
 QUERY="order_id=1217311455238426624"
 
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${QUERY}"
@@ -173,10 +173,10 @@ Place a limit order:
 ```
 timestamp = 1731931956000
 method    = POST
-api_path  = /v1/place_order
+api_path  = /skopenapi/v1/place_order     ← full path including /skopenapi prefix
 body      = {"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
 
-prehash   = 1731931956000POST/v1/place_order&{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
+prehash   = 1731931956000POST/skopenapi/v1/place_order&{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
 ```
 
 ```python
@@ -194,11 +194,11 @@ def pre_hash(timestamp, method, request_path, body):
 
 secret_key = "your_secret_key"
 api_key    = "your_api_key"
-base_url   = "https://mapi.matrixport.com/skopenapi"
+base_url   = "https://mapi.matrixport.com"
 timestamp  = get_timestamp()
 
 method   = "POST"
-api_path = "/v1/place_order"
+api_path = "/skopenapi/v1/place_order"   # full path used for both prehash and URL
 params   = {
     "symbol": "AAPL.US",
     "side":   "Buy",
@@ -227,11 +227,11 @@ print(response.json())
 ```bash
 API_KEY="your_api_key"
 SECRET_KEY="your_secret_key"
-BASE_URL="https://mapi.matrixport.com/skopenapi"
+BASE_URL="https://mapi.matrixport.com"
 TIMESTAMP=$(date +%s000)
 
 METHOD="POST"
-API_PATH="/v1/place_order"
+API_PATH="/skopenapi/v1/place_order"   # full path used for both prehash and URL
 BODY='{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}'
 
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${BODY}"

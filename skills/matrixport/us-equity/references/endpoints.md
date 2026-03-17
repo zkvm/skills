@@ -57,7 +57,7 @@ curl -X POST 'https://mapi.matrixport.com/skopenapi/v1/place_order' \
 ### Signing note (POST)
 
 ```
-prehash = "{timestamp}POST/v1/place_order&{json_body}"
+prehash = "{timestamp}POST/skopenapi/v1/place_order&{json_body}"
 ```
 
 > **Important:** The `json_body` used to compute the signature must be byte-for-byte identical to the body sent in the HTTP request. Construct the JSON string once (e.g. `body = json.dumps(params)`) and use that same string for both signing and the request body. Do not re-serialize.
@@ -170,7 +170,7 @@ curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/orders?order_id=1217311455
 ### Signing note (GET)
 
 ```
-prehash = "{timestamp}GET/v1/orders&order_id=1217311455238426624"
+prehash = "{timestamp}GET/skopenapi/v1/orders&order_id=1217311455238426624"
 ```
 
 ---
@@ -215,7 +215,7 @@ curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/balance' \
 ### Signing note (GET, no params)
 
 ```
-prehash = "{timestamp}GET/v1/balance&"
+prehash = "{timestamp}GET/skopenapi/v1/balance&"
 ```
 
 Note the trailing `&` with an empty string — required even when there are no query parameters.
@@ -272,5 +272,5 @@ curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/positions' \
 ### Signing note (GET, no params)
 
 ```
-prehash = "{timestamp}GET/v1/positions&"
+prehash = "{timestamp}GET/skopenapi/v1/positions&"
 ```

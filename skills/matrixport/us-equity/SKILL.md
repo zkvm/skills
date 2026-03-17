@@ -31,9 +31,10 @@ All private endpoints require four request headers. See [Authentication Referenc
 ### Prehash Format
 
 ```
-{timestamp}{METHOD}{api_path}&{body_or_query_string}
+{timestamp}{METHOD}{full_path}&{body_or_query_string}
 ```
 
+- **`{full_path}`** must include the `/skopenapi` prefix — e.g. `/skopenapi/v1/balance`, not `/v1/balance`
 - **GET**: `body_or_query_string` is the raw query string (e.g. `symbol=AAPL&limit=10`)
 - **POST/PUT**: `body_or_query_string` is the JSON-serialized request body
 - If there are no parameters/body, use an empty string after `&`
