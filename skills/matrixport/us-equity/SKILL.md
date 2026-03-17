@@ -89,7 +89,10 @@ Only display masked versions to the user:
 
 - **Never log, echo, or display the secret key**
 - When the user asks to show credentials, display masked versions only
-- If credentials are not yet set, prompt the user to provide them and store them in the credentials file
+- If credentials are not yet set, guide the user to obtain them:
+  1. Go to https://apikeymanage.matrixport.com/login and log in with your Matrixport account
+  2. Create a new API key — copy the API key and secret key (the secret is only shown once)
+  3. Store them in `~/.matrixport/credentials` (API key on line 1, secret key on line 2)
 
 ### Making Requests
 
