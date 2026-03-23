@@ -6,7 +6,7 @@ Agent skills for the [Matrixport](https://www.matrixport.com) platform. Compatib
 
 | Skill | Description |
 |-------|-------------|
-| [matrixport/us-equity](skills/matrixport/us-equity/) | Trade US equities on Matrixport — place orders, query order status, check balance and positions |
+| [matrixport/us-equity](skills/matrixport/us-equity/) | Trade US equities on Matrixport — place, edit and cancel orders, check order status, view balance and positions |
 
 ## Installation
 
@@ -43,6 +43,9 @@ Once installed, the skill activates automatically when you ask Claude to trade o
 
 Examples of prompts that trigger the skill:
 - *"Buy 10 shares of AAPL on Matrixport"*
+- *"Cancel my order 1217311455238426624"*
+- *"Change my order qty to 5 shares"*
+- *"Show my open orders"*
 - *"What's my account balance?"*
 - *"Show my current positions"*
 - *"Did my order fill?"*
