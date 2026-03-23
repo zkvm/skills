@@ -56,6 +56,8 @@ For full request/response details, see [Endpoint Reference](references/endpoints
 
 **Order side values:** `Buy` / `Sell` (capitalized)
 
+**Order type values:** `LO` (limit order) or `MO` (market order) — never use `"Limit"`, `"Market"`, or any other variant
+
 **All numeric values** (price, qty, cash) are returned and submitted as **strings**.
 
 ## Credentials
