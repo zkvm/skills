@@ -45,12 +45,15 @@ Sign using HMAC SHA256 over the prehash string with the secret key, hex-encoded.
 
 For full request/response details, see [Endpoint Reference](references/endpoints.md).
 
-| Endpoint | Method | Description | Auth |
-|----------|--------|-------------|------|
+| Endpoint | Method | Description | Confirm? |
+|----------|--------|-------------|----------|
 | `/v1/place_order` | POST | Place a limit or market order | Yes |
-| `/v1/orders` | GET | Query order status by `order_id` | Yes |
-| `/v1/balance` | GET | Account cash balances | Yes |
-| `/v1/positions` | GET | All current equity positions | Yes |
+| `/v1/edit_order` | POST | Modify price/qty of an open order | Yes |
+| `/v1/cancel_order` | POST | Cancel an open order | Yes |
+| `/v1/orders` | GET | Query order status by `order_id` | No |
+| `/v1/open_orders` | GET | List all open orders | No |
+| `/v1/balance` | GET | Account cash balances | No |
+| `/v1/positions` | GET | All current equity positions | No |
 
 **Symbol format:** `<TICKER>.<MARKET>` — e.g. `AAPL.US`, `TSLA.US`
 
@@ -80,9 +83,13 @@ Only display masked versions to the user:
 ## Typical Workflow
 
 ```
-1. User wants to place an order → ask for CONFIRM, then call POST /v1/place_order
-2. Follow up → call GET /v1/orders to confirm order was received
-3. Check balance or positions as needed via GET /v1/balance or GET /v1/positions
+1. Place order   → ask for CONFIRM, then POST /v1/place_order
+2. Edit order    → ask for CONFIRM, then POST /v1/edit_order (order_id + qty required, price optional)
+3. Cancel order  → ask for CONFIRM, then POST /v1/cancel_order (order_id required)
+4. Check status  → GET /v1/orders?order_id=... (single order)
+5. List open     → GET /v1/open_orders (all open orders)
+6. Balance       → GET /v1/balance
+7. Positions     → GET /v1/positions
 ```
 
 ## Agent Behavior
@@ -104,7 +111,7 @@ Only display masked versions to the user:
 
 ### Confirmations
 
-- For **order placement** (POST requests), ask the user to type `CONFIRM` before proceeding — orders have financial consequences and cannot always be reversed
+- For **all POST requests** (place, edit, cancel order), ask the user to type `CONFIRM` before proceeding — these operations have financial consequences and cannot always be reversed
 - For read-only (GET) requests, proceed without confirmation
 
 ### Error Handling

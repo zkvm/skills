@@ -274,3 +274,150 @@ curl -X GET 'https://mapi.matrixport.com/skopenapi/v1/positions' \
 ```
 prehash = "{timestamp}GET/skopenapi/v1/positions&"
 ```
+
+---
+
+## POST /v1/edit_order
+
+Modify the price and/or quantity of an existing open order.
+
+**Requires CONFIRM from user before proceeding.**
+
+### Request Body (JSON)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `order_id` | string | Yes | The order ID to modify |
+| `qty` | string | Yes | New order quantity |
+| `price` | string | No | New limit price. Omit to keep existing price |
+
+### Response
+
+`data` is empty on success — use `code == 0` to confirm the edit was accepted.
+
+```json
+{"code": 0, "data": {}}
+```
+
+### Example
+
+```bash
+curl -s -X POST 'https://mapi.matrixport.com/skopenapi/v1/edit_order' \
+  -H 'X-MatrixPort-Access-Key: <api_key>' \
+  -H 'X-Signature: <signature>' \
+  -H 'X-Timestamp: <timestamp_ms>' \
+  -H 'X-Auth-Version: v2' \
+  -H 'Content-Type: application/json' \
+  -d '{"order_id":"1217311455238426624","qty":"5","price":"7.5"}'
+```
+
+### Signing note (POST)
+
+```
+prehash = "{timestamp}POST/skopenapi/v1/edit_order&{json_body}"
+```
+
+---
+
+## POST /v1/cancel_order
+
+Cancel an existing open order.
+
+**Requires CONFIRM from user before proceeding.**
+
+### Request Body (JSON)
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `order_id` | string | Yes | The order ID to cancel |
+
+### Response
+
+`data` is empty on success — use `code == 0` to confirm the cancellation was accepted.
+
+```json
+{"code": 0, "data": {}}
+```
+
+### Example
+
+```bash
+curl -s -X POST 'https://mapi.matrixport.com/skopenapi/v1/cancel_order' \
+  -H 'X-MatrixPort-Access-Key: <api_key>' \
+  -H 'X-Signature: <signature>' \
+  -H 'X-Timestamp: <timestamp_ms>' \
+  -H 'X-Auth-Version: v2' \
+  -H 'Content-Type: application/json' \
+  -d '{"order_id":"1217311455238426624"}'
+```
+
+### Signing note (POST)
+
+```
+prehash = "{timestamp}POST/skopenapi/v1/cancel_order&{json_body}"
+```
+
+---
+
+## GET /v1/open_orders
+
+Query all currently open orders for the account.
+
+### Query Parameters
+
+None.
+
+### Response
+
+Returns an array of order objects under `data`. Each object has the same fields as the `/v1/orders` response.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `order_id` | string | Order ID |
+| `status` | string | Order status (see Status Values under GET /v1/orders) |
+| `symbol` | string | e.g. `AAPL.US` |
+| `side` | string | `Buy` or `Sell` |
+| `order_type` | string | e.g. `LO` |
+| `price` | string | Submitted limit price |
+| `qty` | string | Submitted quantity |
+| `executed_qty` | string | Filled quantity so far |
+| `executed_price` | string | Average fill price (0 if unfilled) |
+| `time_in_force` | string | e.g. `Day` |
+| `remark` | string | Order label |
+
+### Example
+
+```bash
+curl -s -X GET 'https://mapi.matrixport.com/skopenapi/v1/open_orders' \
+  -H 'X-MatrixPort-Access-Key: <api_key>' \
+  -H 'X-Signature: <signature>' \
+  -H 'X-Timestamp: <timestamp_ms>' \
+  -H 'X-Auth-Version: v2'
+```
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "order_id": "1217311455238426624",
+      "status": "NewStatus",
+      "symbol": "BTDR.US",
+      "side": "Buy",
+      "order_type": "LO",
+      "price": "7.80",
+      "qty": "10",
+      "executed_qty": "0",
+      "executed_price": "0",
+      "time_in_force": "Day",
+      "remark": ""
+    }
+  ]
+}
+```
+
+### Signing note (GET, no params)
+
+```
+prehash = "{timestamp}GET/skopenapi/v1/open_orders&"
+```
