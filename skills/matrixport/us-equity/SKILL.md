@@ -1,6 +1,6 @@
 ---
 name: us-equity
-description: Matrixport US Equity trading via the Matrixport API. Use this skill whenever the user wants to trade US stocks or equities on Matrixport — including placing orders, checking order status, viewing account balance, or querying positions. Trigger even if the user doesn't say "Matrixport" explicitly, e.g. "buy 10 shares of AAPL", "sell my TSLA position", "what's my cash balance", "show my positions", "did my order fill". Requires API key and secret key.
+description: Matrixport US Equity trading via the Matrixport API. Use this skill whenever the user wants to trade US stocks or equities on Matrixport — including placing orders, editing or cancelling orders, checking order status, listing open orders, viewing account balance, or querying positions. Trigger even if the user doesn't say "Matrixport" explicitly, e.g. "buy 10 shares of AAPL", "sell my TSLA position", "cancel my order", "modify my order", "show my open orders", "what's my cash balance", "show my positions", "did my order fill". Requires API key and secret key.
 metadata:
   version: 1.0.0
   author: Matrixport
@@ -84,6 +84,7 @@ Only display masked versions to the user:
 
 ```
 1. Place order   → ask for CONFIRM, then POST /v1/place_order
+                   → follow up with GET /v1/orders?order_id=... to confirm receipt and show initial status
 2. Edit order    → ask for CONFIRM, then POST /v1/edit_order (order_id + qty required, price optional)
 3. Cancel order  → ask for CONFIRM, then POST /v1/cancel_order (order_id required)
 4. Check status  → GET /v1/orders?order_id=... (single order)

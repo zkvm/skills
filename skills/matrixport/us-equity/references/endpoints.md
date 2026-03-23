@@ -299,8 +299,9 @@ Modify the price and/or quantity of an existing open order.
 {"code": 0, "data": {}}
 ```
 
-### Example
+### Examples
 
+Change both qty and price:
 ```bash
 curl -s -X POST 'https://mapi.matrixport.com/skopenapi/v1/edit_order' \
   -H 'X-MatrixPort-Access-Key: <api_key>' \
@@ -309,6 +310,11 @@ curl -s -X POST 'https://mapi.matrixport.com/skopenapi/v1/edit_order' \
   -H 'X-Auth-Version: v2' \
   -H 'Content-Type: application/json' \
   -d '{"order_id":"1217311455238426624","qty":"5","price":"7.5"}'
+```
+
+Change qty only (omit `price` key entirely — do not send `null` or `""`):
+```bash
+  -d '{"order_id":"1217311455238426624","qty":"5"}'
 ```
 
 ### Signing note (POST)
