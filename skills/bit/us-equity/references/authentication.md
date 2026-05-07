@@ -1,12 +1,14 @@
-# Matrixport US Equity Authentication
+# BIT US Equity Authentication
 
 All private REST requests require HMAC SHA256 signed requests.
 
 ## Base URL
 
 ```
-https://mapi.matrixport.com/skopenapi
+https://mapi.matrixport.com
 ```
+
+All stock endpoints are under the `/stock/v1/` prefix.
 
 ## Required Headers
 
@@ -58,7 +60,7 @@ prehash = timestamp + METHOD + api_path + '&' + json_body
 Where:
 - `{timestamp}` — millisecond epoch integer as a string
 - `{METHOD}` — HTTP method in **UPPERCASE** (e.g. `GET`, `POST`, `PUT`, `DELETE`)
-- `{api_path}` — the **full** request path including the `/skopenapi` prefix (e.g. `/skopenapi/v1/orders`)
+- `{api_path}` — the **full** request path including the `/stock/v1/` prefix (e.g. `/stock/v1/orders`)
 - `&` — literal ampersand separator
 - `{body_or_query_string}` — query string for GET, JSON body string for POST/PUT
 
@@ -104,10 +106,10 @@ Query order status by order ID:
 ```
 timestamp  = 1731931956000
 method     = GET
-api_path   = /skopenapi/v1/orders          ← full path including /skopenapi prefix
+api_path   = /stock/v1/orders          ← full path including /stock/v1/ prefix
 params     = order_id=1217311455238426624
 
-prehash = "1731931956000GET/skopenapi/v1/orders&order_id=1217311455238426624"
+prehash = "1731931956000GET/stock/v1/orders&order_id=1217311455238426624"
 ```
 
 ```python
@@ -129,7 +131,7 @@ base_url   = "https://mapi.matrixport.com"
 timestamp  = get_timestamp()
 
 method    = "GET"
-api_path  = "/skopenapi/v1/orders"   # full path used for both prehash and URL
+api_path  = "/stock/v1/orders"   # full path used for both prehash and URL
 query_str = "order_id=1217311455238426624"
 
 prehash   = pre_hash(timestamp, method, api_path, query_str)
@@ -153,7 +155,7 @@ BASE_URL="https://mapi.matrixport.com"
 TIMESTAMP=$(date +%s000)
 
 METHOD="GET"
-API_PATH="/skopenapi/v1/orders"   # full path used for both prehash and URL
+API_PATH="/stock/v1/orders"   # full path used for both prehash and URL
 QUERY="order_id=1217311455238426624"
 
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${QUERY}"
@@ -173,10 +175,10 @@ Place a limit order:
 ```
 timestamp = 1731931956000
 method    = POST
-api_path  = /skopenapi/v1/place_order     ← full path including /skopenapi prefix
+api_path  = /stock/v1/place_order     ← full path including /stock/v1/ prefix
 body      = {"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
 
-prehash   = 1731931956000POST/skopenapi/v1/place_order&{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
+prehash   = 1731931956000POST/stock/v1/place_order&{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}
 ```
 
 ```python
@@ -198,7 +200,7 @@ base_url   = "https://mapi.matrixport.com"
 timestamp  = get_timestamp()
 
 method   = "POST"
-api_path = "/skopenapi/v1/place_order"   # full path used for both prehash and URL
+api_path = "/stock/v1/place_order"   # full path used for both prehash and URL
 params   = {
     "symbol": "AAPL.US",
     "side":   "Buy",
@@ -231,7 +233,7 @@ BASE_URL="https://mapi.matrixport.com"
 TIMESTAMP=$(date +%s000)
 
 METHOD="POST"
-API_PATH="/skopenapi/v1/place_order"   # full path used for both prehash and URL
+API_PATH="/stock/v1/place_order"   # full path used for both prehash and URL
 BODY='{"symbol":"AAPL.US","side":"Buy","price":"89.0","qty":"10","remark":"test123"}'
 
 PREHASH="${TIMESTAMP}${METHOD}${API_PATH}&${BODY}"
@@ -302,6 +304,6 @@ If you receive repeated auth errors, verify:
 
 - Never share your secret key
 - Store credentials securely; never hard-code them in source files
-- Use IP allowlists in Matrixport API settings where available
+- Use IP allowlists in BIT API settings where available
 - Enable only the required permissions for the API key (e.g. read-only vs. trading)
 - Timestamps must be within a reasonable window of server time; if you receive authentication errors, check clock synchronization

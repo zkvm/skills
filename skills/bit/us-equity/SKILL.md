@@ -1,21 +1,23 @@
 ---
 name: us-equity
-description: Matrixport US Equity trading via the Matrixport API. Use this skill whenever the user wants to trade US stocks or equities on Matrixport — including placing orders, editing or cancelling orders, checking order status, listing open orders, viewing account balance, or querying positions. Trigger even if the user doesn't say "Matrixport" explicitly, e.g. "buy 10 shares of AAPL", "sell my TSLA position", "cancel my order", "modify my order", "show my open orders", "what's my cash balance", "show my positions", "did my order fill". Requires API key and secret key.
+description: BIT US Equity trading via the BIT API. Use this skill whenever the user wants to trade US stocks or equities on BIT — including placing orders, editing or cancelling orders, checking order status, listing open orders, viewing account balance, or querying positions. Trigger even if the user doesn't say "BIT" explicitly, e.g. "buy 10 shares of AAPL", "sell my TSLA position", "cancel my order", "modify my order", "show my open orders", "what's my cash balance", "show my positions", "did my order fill". Requires API key and secret key.
 metadata:
   version: 1.0.0
-  author: Matrixport
+  author: BIT
 license: MIT
 ---
 
-# Matrixport US Equity Skill
+# BIT US Equity Skill
 
-Place and manage US equity orders on Matrixport. All endpoints require authentication via API key and secret key.
+Place and manage US equity orders on BIT. All endpoints require authentication via API key and secret key.
 
 ## Base URL
 
 ```
-https://mapi.matrixport.com/skopenapi
+https://mapi.matrixport.com
 ```
+
+All stock endpoints are under the `/stock/v1/` prefix.
 
 ## Authentication
 
@@ -34,8 +36,8 @@ All private endpoints require four request headers. See [Authentication Referenc
 {timestamp}{METHOD}{full_path}&{body_or_query_string}
 ```
 
-- **`{full_path}`** must include the `/skopenapi` prefix — e.g. `/skopenapi/v1/balance`, not `/v1/balance`
-- **GET**: `body_or_query_string` is the raw query string (e.g. `symbol=AAPL&limit=10`)
+- **`{full_path}`** must include the `/stock/v1/` prefix — e.g. `/stock/v1/balance`, not `/v1/balance`
+- **GET**: `body_or_query_string` is the raw query string (e.g. `symbol=AAPL.US&start_at=1680000000`)
 - **POST/PUT**: `body_or_query_string` is the JSON-serialized request body
 - If there are no parameters/body, use an empty string after `&`
 
@@ -47,19 +49,22 @@ For full request/response details, see [Endpoint Reference](references/endpoints
 
 | Endpoint | Method | Description | Confirm? |
 |----------|--------|-------------|----------|
-| `/v1/place_order` | POST | Place a limit or market order | Yes |
-| `/v1/edit_order` | POST | Modify price/qty of an open order | Yes |
-| `/v1/cancel_order` | POST | Cancel an open order | Yes |
-| `/v1/orders` | GET | Query order status by `order_id` | No |
-| `/v1/open_orders` | GET | List all open orders | No |
-| `/v1/balance` | GET | Account cash balances | No |
-| `/v1/positions` | GET | All current equity positions | No |
+| `/stock/v1/place_order` | POST | Place a limit or market order | Yes |
+| `/stock/v1/edit_order` | POST | Modify price and qty of an open order | Yes |
+| `/stock/v1/cancel_order` | POST | Cancel an open order | Yes |
+| `/stock/v1/orders` | GET | Query orders by symbol/side/time/`order_id` (returns array) | No |
+| `/stock/v1/order_detail` | GET | Single order detail with fee breakdown | No |
+| `/stock/v1/open_orders` | GET | List all open orders for current trading day | No |
+| `/stock/v1/balance` | GET | Account cash balances (USD) | No |
+| `/stock/v1/positions` | GET | All current stock positions | No |
 
 **Symbol format:** `<TICKER>.<MARKET>` — e.g. `AAPL.US`, `TSLA.US`
 
-**Order side values:** `Buy` / `Sell` (capitalized)
+**Order side values:** `Buy` / `Sell` (case-insensitive on input; responses use capitalized form)
 
 **Order type values:** `LO` (limit order) or `MO` (market order) — never use `"Limit"`, `"Market"`, or any other variant
+
+**Quantity:** must be a **positive integer string**, e.g. `"100"` (not `"100.5"`)
 
 **All numeric values** (price, qty, cash) are returned and submitted as **strings**.
 
@@ -67,12 +72,12 @@ For full request/response details, see [Endpoint Reference](references/endpoints
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `apiKey` | string | Matrixport API key — display only first 5 + last 4 characters |
-| `secretKey` | string | Matrixport secret key — never display, used only for signing |
+| `apiKey` | string | BIT API key — display only first 5 + last 4 characters |
+| `secretKey` | string | BIT secret key — never display, used only for signing |
 
 ### Storage
 
-Store credentials in a local file (default `~/.matrixport/credentials`):
+Store credentials in a local file (default `~/.bit/credentials`):
 - Line 1: API key
 - Line 2: Secret key
 
@@ -83,15 +88,18 @@ Only display masked versions to the user:
 ## Typical Workflow
 
 ```
-1. Place order   → ask for CONFIRM, then POST /v1/place_order
-                   → follow up with GET /v1/orders?order_id=... to confirm receipt and show initial status
-2. Edit order    → ask for CONFIRM, then POST /v1/edit_order (order_id + qty required, price optional)
-3. Cancel order  → ask for CONFIRM, then POST /v1/cancel_order (order_id required)
-4. Check status  → GET /v1/orders?order_id=... (single order)
-5. List open     → GET /v1/open_orders (all open orders)
-6. Balance       → GET /v1/balance
-7. Positions     → GET /v1/positions
+1. Place order   → ask for CONFIRM, then POST /stock/v1/place_order
+                   → follow up with GET /stock/v1/orders?order_id=... to confirm receipt and show initial status
+2. Edit order    → ask for CONFIRM, then POST /stock/v1/edit_order (order_id, qty, price all required)
+3. Cancel order  → ask for CONFIRM, then POST /stock/v1/cancel_order (order_id required)
+4. Check status  → GET /stock/v1/orders?order_id=... (returns single-item array)
+                   → GET /stock/v1/order_detail?order_id=... when fee breakdown is needed
+5. List open     → GET /stock/v1/open_orders
+6. Balance       → GET /stock/v1/balance
+7. Positions     → GET /stock/v1/positions
 ```
+
+> Note: `/stock/v1/orders` requires at least one query parameter — calling it with no params returns HTTP 400 / `code=20080400`.
 
 ## Agent Behavior
 
@@ -99,7 +107,7 @@ Only display masked versions to the user:
 
 - **Never log, echo, or display the secret key**
 - When the user asks to show credentials, display masked versions only
-- If credentials are not yet set, ask the user to provide them. Direct them to https://apikeymanage.matrixport.com/login to log in with their Matrixport account and create an API key. Once the user provides the API key and secret key, automatically save them to `~/.matrixport/credentials` (API key on line 1, secret key on line 2)
+- If credentials are not yet set, ask the user to provide them. Direct them to https://apikeymanage.matrixport.com/login to log in with their BIT account and create an API key. Once the user provides the API key and secret key, automatically save them to `~/.bit/credentials` (API key on line 1, secret key on line 2)
 
 ### Making Requests
 
@@ -133,6 +141,6 @@ See [Authentication Reference](references/authentication.md) for the full signin
 ## Security
 
 - Never share or expose your secret key
-- Use IP allowlists in Matrixport API settings where available
+- Use IP allowlists in BIT API settings where available
 - Enable only the permissions required for your use case
 - Rotate credentials if you suspect compromise
