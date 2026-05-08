@@ -14,13 +14,15 @@ Agent skills for the [BIT](https://www.bit.com) platform. Compatible with Claude
 
 Install globally (available across all projects):
 ```bash
-npx skills add zkvm/skills --skill us-equity -g
+npx skills add zkvm/skills --skill us-equity -a claude-code -g
 ```
 
 Install for a specific project only:
 ```bash
-npx skills add zkvm/skills --skill us-equity
+npx skills add zkvm/skills --skill us-equity -a claude-code
 ```
+
+> The `-a claude-code` flag skips the interactive agent picker and installs the symlink straight into `~/.claude/skills/`. Drop it (or replace with another agent like `-a openclaw`) if you want a different target.
 
 ### OpenClaw — via `clawhub`
 
